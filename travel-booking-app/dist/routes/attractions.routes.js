@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const attractions_controller_1 = require("../controllers/attractions.controller");
+const router = (0, express_1.Router)();
+const attractionsController = new attractions_controller_1.AttractionsController();
+router.get('/', attractionsController.getAllAttractions.bind(attractionsController));
+router.get('/:id', attractionsController.getAttractionById.bind(attractionsController));
+router.post('/', attractionsController.createAttraction.bind(attractionsController));
+router.put('/:id', attractionsController.updateAttraction.bind(attractionsController));
+router.delete('/:id', attractionsController.deleteAttraction.bind(attractionsController));
+exports.default = router;
