@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>Home | Travel Booking</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="home.css" />
+</head>
+<body>
+<header class="home-header fade-in">
+  <div class="brand">Travel<span>Booking</span></div>
+  <nav>
+    <a href="home.html" class="active">หน้าแรก</a>
+    <a href="index.html#hotels">โรงแรม</a>
+    <a href="index.html#auth">เข้าสู่ระบบ</a>
+  </nav>
+</header>
+<section class="hero fade-in" id="hero" data-bg-key="default">
+  <div class="hero-content">
+  <h1 class="hero-title">ค้นหา – จอง – เดินทาง</h1>
+  <p class="hero-sub">รวมที่พัก ร้านอาหาร และสถานที่ท่องเที่ยว ไว้ที่เดียวให้คุณวางแผนได้ง่าย</p>
+    <form id="quickSearchForm" class="quick-search">
+      <input name="q" placeholder="ค้นหาโรงแรม หรือจังหวัด..." />
+      <select name="type">
+        <option value="hotel">โรงแรม</option>
+        <option value="restaurant">ร้านอาหาร</option>
+        <option value="attraction">สถานที่เที่ยว</option>
+      </select>
+      <button>ค้นหา</button>
+    </form>
+    <div id="quickResult" class="quick-result"></div>
+  </div>
+</section>
+<section class="section container fade-in" id="popular">
+  <div class="section-title"><h2>จุดหมายยอดนิยม</h2><span class="pill-badge">Top picks</span></div>
+  <div id="popularDest" class="cards-grid"></div>
+</section>
+<section class="section alt container fade-in" id="why">
+  <div class="section-title"><h2>ทำไมต้องเรา?</h2><span class="pill-badge">Core</span></div>
+  <ul class="reasons">
+    <li><strong>รวดเร็ว:</strong> API ออกแบบให้ต่อยอดได้ทันที</li>
+    <li><strong>ปรับขยายง่าย:</strong> แยก Service / Repository พร้อมต่อ DB</li>
+    <li><strong>ปลอดภัยเบื้องต้น:</strong> JWT + โครงสร้างพร้อมเพิ่ม Refresh Token</li>
+    <li><strong>พร้อมพัฒนา Frontend Framework:</strong> โอนย้าย logic ไป React / Next.js ได้ง่าย</li>
+  </ul>
+</section>
+<section class="section container fade-in" id="roadmap">
+  <div class="section-title"><h2>Roadmap ถัดไป</h2><span class="pill-badge">Next</span></div>
+  <ol class="roadmap">
+    <li>เพิ่ม Validation (zod)</li>
+    <li>ผูกฐานข้อมูล (PostgreSQL + Prisma)</li>
+    <li>เพิ่มระบบ Booking & Payment Mock</li>
+    <li>ระบบรีวิว + คะแนน</li>
+    <li>แผนที่ (Leaflet / Google Maps)</li>
+  </ol>
+</section>
+<footer class="home-footer">&copy; 2025 TravelBooking — Prototype Mode</footer>
+<script src="home.js"></script>
+</body>
+</html>

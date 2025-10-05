@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AttractionsController = void 0;
 const attractions_service_1 = require("../services/attractions.service");
+const response_1 = require("../utils/response");
+const domain_errors_1 = require("../errors/domain.errors");
 class AttractionsController {
     constructor() {
         this.attractionsService = new attractions_service_1.AttractionsService();
@@ -9,7 +11,7 @@ class AttractionsController {
     async getAllAttractions(req, res) {
         try {
             const attractions = await this.attractionsService.getAllAttractions();
-            res.status(200).json(attractions);
+            (0, response_1.success)(res, attractions);
         }
         catch (error) {
             res.status(500).json({ message: 'Error retrieving attractions', error });
@@ -19,11 +21,9 @@ class AttractionsController {
         const { id } = req.params;
         try {
             const attraction = await this.attractionsService.getAttractionById(id);
-            if (!attraction) {
-                res.status(404).json({ message: 'Attraction not found' });
-                return;
-            }
-            res.status(200).json(attraction);
+            if (!attraction)
+                throw new domain_errors_1.AttractionNotFoundError(id);
+            (0, response_1.success)(res, attraction);
             return;
         }
         catch (error) {
@@ -33,7 +33,7 @@ class AttractionsController {
     async createAttraction(req, res) {
         try {
             const newAttraction = await this.attractionsService.addAttraction(req.body);
-            res.status(201).json(newAttraction);
+            (0, response_1.created)(res, newAttraction);
         }
         catch (error) {
             res.status(500).json({ message: 'Error creating attraction', error });
@@ -43,11 +43,9 @@ class AttractionsController {
         const { id } = req.params;
         try {
             const updated = await this.attractionsService.updateAttraction(id, req.body);
-            if (!updated) {
-                res.status(404).json({ message: 'Attraction not found' });
-                return;
-            }
-            res.status(200).json(updated);
+            if (!updated)
+                throw new domain_errors_1.AttractionNotFoundError(id);
+            (0, response_1.success)(res, updated);
             return;
         }
         catch (error) {
@@ -58,11 +56,9 @@ class AttractionsController {
         const { id } = req.params;
         try {
             const deleted = await this.attractionsService.deleteAttraction(id);
-            if (!deleted) {
-                res.status(404).json({ message: 'Attraction not found' });
-                return;
-            }
-            res.status(204).send();
+            if (!deleted)
+                throw new domain_errors_1.AttractionNotFoundError(id);
+            (0, response_1.noContent)(res);
             return;
         }
         catch (error) {

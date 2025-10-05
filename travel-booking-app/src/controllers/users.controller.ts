@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { UsersService } from '../services/users.service';
 import { UpdateUserDTO } from '../dtos/user.dto';
+import { success, noContent } from '../utils/response';
+import { UserNotFoundError } from '../errors/domain.errors';
 
 export class UsersController {
     private usersService: UsersService;
@@ -13,7 +15,8 @@ export class UsersController {
         try {
             const userId = req.params.id;
             const user = await this.usersService.getUserById(userId);
-            return res.status(200).json(user);
+            if (!user) throw new UserNotFoundError(userId);
+            return success(res, user);
         } catch (error) {
             return res.status(500).json({ message: 'Error retrieving user' });
         }
@@ -24,7 +27,8 @@ export class UsersController {
             const userId = req.params.id;
             const userData: UpdateUserDTO = req.body;
             const updatedUser = await this.usersService.updateUser(userId, userData);
-            return res.status(200).json(updatedUser);
+            if (!updatedUser) throw new UserNotFoundError(userId);
+            return success(res, updatedUser);
         } catch (error) {
             return res.status(500).json({ message: 'Error updating user' });
         }
@@ -33,8 +37,9 @@ export class UsersController {
     public async deleteUser(req: Request, res: Response): Promise<Response> {
         try {
             const userId = req.params.id;
-            await this.usersService.deleteUser(userId);
-            return res.status(204).send();
+            const deleted = this.usersService.deleteUser(userId);
+            if (!deleted) throw new UserNotFoundError(userId);
+            return noContent(res);
         } catch (error) {
             return res.status(500).json({ message: 'Error deleting user' });
         }

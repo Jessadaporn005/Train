@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.paginated = exports.noContent = exports.created = exports.success = void 0;
+const success = (res, data, status = 200) => res.status(status).json({ success: true, data });
+exports.success = success;
+const created = (res, data) => (0, exports.success)(res, data, 201);
+exports.created = created;
+const noContent = (res) => res.status(204).send();
+exports.noContent = noContent;
+const paginated = (res, data, total, page, pageSize) => res.status(200).json({ success: true, data, meta: { total, page, pageSize, totalPages: Math.ceil(total / pageSize) } });
+exports.paginated = paginated;

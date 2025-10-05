@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { RestaurantsService } from '../services/restaurants.service';
 import { Restaurant } from '../models/restaurant.model';
+import { success, created, noContent } from '../utils/response';
+import { RestaurantNotFoundError } from '../errors/domain.errors';
 
 export class RestaurantsController {
     private restaurantsService: RestaurantsService;
@@ -12,7 +14,7 @@ export class RestaurantsController {
     public async getAllRestaurants(req: Request, res: Response): Promise<void> {
         try {
             const restaurants: Restaurant[] = await this.restaurantsService.getAllRestaurants();
-            res.status(200).json(restaurants);
+            success(res, restaurants);
         } catch (error) {
             res.status(500).json({ message: 'Error retrieving restaurants', error });
         }
@@ -22,8 +24,8 @@ export class RestaurantsController {
         const { id } = req.params;
         try {
             const restaurant = await this.restaurantsService.getRestaurantById(id);
-            if (!restaurant) { res.status(404).json({ message: 'Restaurant not found' }); return; }
-            res.status(200).json(restaurant);
+            if (!restaurant) throw new RestaurantNotFoundError(id);
+            success(res, restaurant);
         } catch (error) {
             res.status(500).json({ message: 'Error retrieving restaurant', error });
         }
@@ -33,7 +35,7 @@ export class RestaurantsController {
         const newRestaurant: Restaurant = req.body;
         try {
             const createdRestaurant = await this.restaurantsService.addRestaurant(newRestaurant);
-            res.status(201).json(createdRestaurant);
+            created(res, createdRestaurant);
         } catch (error) {
             res.status(500).json({ message: 'Error creating restaurant', error });
         }
@@ -44,8 +46,8 @@ export class RestaurantsController {
         const updatedData: Restaurant = req.body;
         try {
             const updatedRestaurant = await this.restaurantsService.updateRestaurant(id, updatedData);
-            if (!updatedRestaurant) { res.status(404).json({ message: 'Restaurant not found' }); return; }
-            res.status(200).json(updatedRestaurant);
+            if (!updatedRestaurant) throw new RestaurantNotFoundError(id);
+            success(res, updatedRestaurant);
         } catch (error) {
             res.status(500).json({ message: 'Error updating restaurant', error });
         }
@@ -55,8 +57,8 @@ export class RestaurantsController {
         const { id } = req.params;
         try {
             const deleted: boolean = await this.restaurantsService.deleteRestaurant(id);
-            if (!deleted) { res.status(404).json({ message: 'Restaurant not found' }); return; }
-            res.status(204).send();
+            if (!deleted) throw new RestaurantNotFoundError(id);
+            noContent(res);
         } catch (error) {
             res.status(500).json({ message: 'Error deleting restaurant', error });
         }

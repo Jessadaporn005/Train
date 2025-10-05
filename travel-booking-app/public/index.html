@@ -4,44 +4,75 @@
   <meta charset="UTF-8" />
   <title>Travel Booking Demo</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="theme.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <header>
   <h1>Travel Booking (Demo)</h1>
   <nav>
-    <a href="#auth">Auth</a>
+  <a href="home.html">Home</a>
+  <a href="#auth">Auth</a>
     <a href="#hotels">Hotels</a>
     <a href="#restaurants">Restaurants</a>
     <a href="#bookings">Bookings</a>
   </nav>
 </header>
 <main>
-<section id="auth" class="card">
-  <h2>เข้าสู่ระบบ / สมัคร</h2>
-  <div class="grid-3">
-    <form id="registerForm" class="panel">
-      <h3>สมัครสมาชิก</h3>
-      <input name="username" placeholder="ชื่อผู้ใช้" required />
-      <input name="email" type="email" placeholder="อีเมล" required />
-      <input name="password" type="password" placeholder="รหัสผ่าน" required />
-      <button>สมัคร</button>
-      <div class="msg" data-role="registerMsg"></div>
-    </form>
-
-    <form id="loginForm" class="panel">
+<section id="auth" class="card auth-shell">
+  <div class="auth-header">
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" data-auth-tab="login" role="tab" aria-selected="true">เข้าสู่ระบบ</button>
+      <button class="auth-tab" data-auth-tab="register" role="tab" aria-selected="false">สมัครสมาชิก</button>
+      <div class="auth-underline" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="auth-panels">
+    <form id="loginForm" class="auth-panel active" data-auth-panel="login" autocomplete="on">
       <h3>เข้าสู่ระบบ</h3>
-      <input name="email" type="email" placeholder="อีเมล" required />
-      <input name="password" type="password" placeholder="รหัสผ่าน" required />
-      <button>เข้าสู่ระบบ</button>
+      <label class="field">
+        <span>อีเมล</span>
+        <input name="email" type="email" placeholder="you@example.com" required />
+      </label>
+      <label class="field">
+        <span>รหัสผ่าน</span>
+        <input name="password" type="password" placeholder="••••••••" required />
+      </label>
+      <div class="actions-row">
+        <button class="btn-primary wide">เข้าสู่ระบบ</button>
+      </div>
       <div class="msg" data-role="loginMsg"></div>
+      <p class="switch-hint">ยังไม่มีบัญชี? <a href="#" data-switch-to="register">สมัครเลย</a></p>
     </form>
 
-    <div id="sessionBox" class="panel hidden">
+    <form id="registerForm" class="auth-panel" data-auth-panel="register" autocomplete="off">
+      <h3>สร้างบัญชีใหม่</h3>
+      <label class="field">
+        <span>ชื่อผู้ใช้</span>
+        <input name="username" placeholder="เช่น travellover" required />
+      </label>
+      <label class="field">
+        <span>อีเมล</span>
+        <input name="email" type="email" placeholder="you@example.com" required />
+      </label>
+      <label class="field">
+        <span>รหัสผ่าน</span>
+        <input name="password" type="password" minlength="6" placeholder="อย่างน้อย 6 ตัว" required />
+      </label>
+      <div class="actions-row">
+        <button class="btn-primary wide">สมัครสมาชิก</button>
+      </div>
+      <div class="msg" data-role="registerMsg"></div>
+      <p class="switch-hint">มีบัญชีแล้ว? <a href="#" data-switch-to="login">เข้าสู่ระบบ</a></p>
+    </form>
+
+    <div id="sessionBox" class="auth-panel session-panel hidden" data-auth-panel="session">
       <h3>Session</h3>
-      <p><strong>Token:</strong></p>
+      <p class="subtle">Token (แสดงบางส่วน):</p>
       <code id="tokenPreview"></code>
-      <button id="logoutBtn" class="secondary">ออกจากระบบ</button>
+      <div class="actions-row">
+        <button id="logoutBtn" class="secondary">ออกจากระบบ</button>
+      </div>
     </div>
   </div>
 </section>

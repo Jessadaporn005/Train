@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { BookingsController } from '../controllers/bookings.controller';
+import { validateBody } from '../middlewares/validate.middleware';
+import { createBookingSchema } from '../validators/schemas';
 
 const router = Router();
 const bookingsController = new BookingsController();
 
 // Route to create a new booking
-router.post('/', bookingsController.createBooking.bind(bookingsController));
+router.post('/', validateBody(createBookingSchema), bookingsController.createBooking.bind(bookingsController));
 
 // Route to get all bookings
 router.get('/', bookingsController.getAllBookings.bind(bookingsController));

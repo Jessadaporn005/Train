@@ -1,0 +1,86 @@
+:root {
+  --font-base: system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans Thai",sans-serif;
+  --color-bg: #f5f7fb;
+  --color-bg-alt: #ffffff;
+  --color-surface: #ffffff;
+  --color-border: #dce3ec;
+  --color-border-strong: #b9c4d1;
+  --color-primary: #1d3557;
+  --color-primary-accent: #3d6fa8;
+  --color-primary-soft: #e3f2ff;
+  --color-accent: #52b2ff;
+  --color-accent-grad-start: #4facfe;
+  --color-accent-grad-end: #00f2fe;
+  --color-text: #1f2a33;
+  --color-text-soft: #5b6874;
+  --color-focus-ring: #4dabf7;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 18px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,.06);
+  --shadow: 0 4px 14px -4px rgba(26,42,58,.15);
+  --transition: .22s cubic-bezier(.4,0,.2,1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0d141c;
+    --color-bg-alt: #101b27;
+    --color-surface: #132230;
+    --color-border: #243342;
+    --color-border-strong: #395063;
+    --color-text: #dbe4ed;
+    --color-text-soft: #9fb3c3;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.55);
+    --shadow: 0 4px 18px -6px rgba(0,0,0,.55);
+  }
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-base); background: radial-gradient(circle at 5% 5%, #f2f7fc 0%, var(--color-bg) 55%); }
+@media (prefers-color-scheme: dark) { body { background: linear-gradient(140deg,#0c141d,#0e1824 55%,#101d2b); } }
+
+.glass {
+  background: rgba(255,255,255,.65);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.35);
+}
+@media (prefers-color-scheme: dark) { .glass { background: rgba(19,34,48,.55); border-color: rgba(255,255,255,.06);} }
+
+.fade-in { animation: fadeIn .6s var(--transition); }
+@keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to { opacity:1; transform: translateY(0);} }
+
+.btn-gradient {
+  background: linear-gradient(90deg,var(--color-accent-grad-start), var(--color-accent-grad-end));
+  color:#fff; border:none; padding:.7rem 1.2rem; border-radius: var(--radius-sm);
+  font-weight:600; letter-spacing:.5px; cursor:pointer; position:relative; overflow:hidden;
+  box-shadow: var(--shadow-sm); transition: var(--transition);
+}
+.btn-gradient:hover { filter: brightness(1.05); box-shadow: var(--shadow); }
+.btn-gradient:active { transform: translateY(1px); }
+
+.pill-badge { display:inline-flex; align-items:center; gap:.35rem; font-size:.62rem; text-transform:uppercase; letter-spacing:.8px; background: var(--color-primary); color:#fff; padding:.35rem .55rem; border-radius: 40px; }
+
+.skeleton { position:relative; overflow:hidden; background:linear-gradient(90deg,#e4e9ef,#f1f5f9 40%,#e4e9ef 80%); background-size:200% 100%; animation: skeleton 1.2s linear infinite; border-radius: var(--radius-sm); }
+@keyframes skeleton { to { background-position:-200% 0; } }
+
+.hotel-card { background: var(--color-surface); border:1px solid var(--color-border); border-radius: var(--radius); padding:.9rem .95rem; display:flex; flex-direction:column; gap:.55rem; position:relative; box-shadow: var(--shadow-sm); transition: var(--transition); }
+.hotel-card:hover { border-color: var(--color-border-strong); box-shadow: var(--shadow); transform: translateY(-2px); }
+.hotel-card h4 { margin:0; font-size:.95rem; letter-spacing:.3px; font-weight:600; }
+.hotel-meta { font-size:.65rem; text-transform:uppercase; letter-spacing:.8px; color: var(--color-text-soft); display:flex; gap:.75rem; }
+.chip { background: var(--color-primary-soft); color: var(--color-primary); font-size:.6rem; padding:.25rem .5rem; border-radius: var(--radius-xs); font-weight:600; letter-spacing:.5px; }
+
+.divider { height:1px; width:100%; background: linear-gradient(90deg,rgba(0,0,0,0), var(--color-border), rgba(0,0,0,0)); margin:.4rem 0; }
+
+.subtle { color: var(--color-text-soft); font-size:.72rem; }
+
+.section-title { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin:0 0 .85rem; }
+.section-title h2 { margin:0; font-size:1.05rem; letter-spacing:.6px; }
+
+/* Scrollbar tweak (webkit) */
+*::-webkit-scrollbar { width:10px; height:10px; }
+*::-webkit-scrollbar-track { background: rgba(0,0,0,0); }
+*::-webkit-scrollbar-thumb { background: linear-gradient(var(--color-primary), var(--color-primary-accent)); border-radius: 20px; }
+*::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }

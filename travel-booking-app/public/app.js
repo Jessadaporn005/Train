@@ -20,16 +20,22 @@ async function api(path, {method='GET', body, headers={}}={}){
   if(body){ opts.body = JSON.stringify(body); opts.headers['Content-Type']='application/json'; }
   if(token) opts.headers['Authorization']='Bearer '+token;
   const res = await fetch(API_BASE+path, opts);
-  if(!res.ok){ let msg='Error '+res.status; try{ msg = (await res.json()).message || msg; }catch{} throw new Error(msg); }
-  try { return await res.json(); } catch { return null; }
+  let json = null;
+  try { json = await res.json(); } catch {}
+  if(!res.ok){
+    const msg = json?.error?.message || json?.message || ('Error '+res.status);
+    throw new Error(msg);
+  }
+  // standardized: { success, data }
+  return json?.data !== undefined ? json.data : json;
 }
 
 async function loadHotels(){
   hotelList.innerHTML = '<li>Loading...</li>';
   try {
-    const data = await api('/hotels');
-    if(!Array.isArray(data) || !data.length){ hotelList.innerHTML = '<li>ยังไม่มีข้อมูลโรงแรม</li>'; return; }
-    hotelList.innerHTML = data.map(h=>`<li><h4>${escapeHtml(h.name)}</h4><div><span class="price">฿${h.pricePerNight}</span> / คืน</div><div>${escapeHtml(h.location || h.city || '')}</div><small>ห้อง: ${h.availableRooms ?? '-'} | Rating: ${h.rating ?? 0}</small></li>`).join('');
+    const hotels = await api('/hotels');
+    if(!Array.isArray(hotels) || !hotels.length){ hotelList.innerHTML = '<li>ยังไม่มีข้อมูลโรงแรม</li>'; return; }
+    hotelList.innerHTML = hotels.map(h=>`<li><h4>${escapeHtml(h.name)}</h4><div><span class="price">฿${h.pricePerNight}</span> / คืน</div><div>${escapeHtml(h.location || h.city || '')}</div><small>ห้อง: ${h.availableRooms ?? '-'} | Rating: ${h.rating ?? 0}</small></li>`).join('');
   } catch(err){ hotelList.innerHTML='<li class="error">โหลดไม่สำเร็จ</li>'; }
 }
 
@@ -74,3 +80,42 @@ hotelForm?.addEventListener('submit', async e=>{
 function escapeHtml(str){ return String(str||'').replace(/[&<>"]/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[s])); }
 
 loadHotels();
+
+// Auth tab switching logic
+(function initAuthTabs(){
+  const tabs = document.querySelectorAll('.auth-tab');
+  const underline = document.querySelector('.auth-underline');
+  const panels = document.querySelectorAll('.auth-panel');
+  function activate(name){
+    tabs.forEach(t=>{ const on = t.dataset.authTab===name; t.classList.toggle('active', on); t.setAttribute('aria-selected', on?'true':'false'); });
+    panels.forEach(p=>{ p.classList.toggle('active', p.dataset.authPanel===name || (name==='session' && p.dataset.authPanel==='session')); });
+    const activeTab = Array.from(tabs).find(t=>t.classList.contains('active'));
+    if(activeTab && underline){
+      const r = activeTab.getBoundingClientRect();
+      const pr = activeTab.parentElement.getBoundingClientRect();
+      underline.style.width = r.width+'px';
+      underline.style.transform = `translateX(${r.left-pr.left}px)`;
+    }
+    // focus first field
+    const panel = document.querySelector(`.auth-panel.active input`);
+    if(panel) panel.focus({preventScroll:true});
+    localStorage.setItem('authTab', name);
+  }
+  tabs.forEach(t=> t.addEventListener('click', e=>{ e.preventDefault(); const target = t.dataset.authTab; activate(target); }));
+  document.addEventListener('click', e=>{
+    const sw = e.target.closest('[data-switch-to]');
+    if(sw){ e.preventDefault(); activate(sw.getAttribute('data-switch-to')); }
+  });
+  // restore last tab
+  const last = localStorage.getItem('authTab');
+  if(last && ['login','register'].includes(last)) activate(last); else activate('login');
+  window.addEventListener('resize', ()=>{ // reposition underline on resize
+    const activeTab = document.querySelector('.auth-tab.active');
+    if(activeTab && underline){
+      const r = activeTab.getBoundingClientRect();
+      const pr = activeTab.parentElement.getBoundingClientRect();
+      underline.style.width = r.width+'px';
+      underline.style.transform = `translateX(${r.left-pr.left}px)`;
+    }
+  });
+})();

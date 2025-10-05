@@ -7,14 +7,15 @@ exports.AuthService = void 0;
 const jsonwebtoken_1 = require("jsonwebtoken");
 const repositories_1 = require("../repositories");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const domain_errors_1 = require("../errors/domain.errors");
 class AuthService {
     async register(data) {
         if (data.password !== data.confirmPassword) {
-            throw new Error('รหัสผ่านไม่ตรงกัน');
+            throw new domain_errors_1.PasswordMismatchError();
         }
         const existing = await repositories_1.userRepository.findByEmail(data.email);
         if (existing)
-            throw new Error('อีเมลถูกใช้แล้ว');
+            throw new domain_errors_1.DuplicateEmailError(data.email);
         const hash = await bcryptjs_1.default.hash(data.password, 10);
         const user = await repositories_1.userRepository.create({
             username: data.username,
@@ -28,10 +29,10 @@ class AuthService {
     async login(data) {
         const user = await repositories_1.userRepository.findByEmail(data.email);
         if (!user)
-            return null;
+            throw new domain_errors_1.InvalidCredentialsError();
         const ok = await bcryptjs_1.default.compare(data.password, user.password);
         if (!ok)
-            return null;
+            throw new domain_errors_1.InvalidCredentialsError();
         return { token: this.generateToken(user) };
     }
     generateToken(user) {

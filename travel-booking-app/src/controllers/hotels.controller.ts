@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { HotelsService } from '../services/hotels.service';
 import { CreateHotelDTO, HotelDTO } from '../dtos/hotel.dto';
+import { success, created, noContent } from '../utils/response';
+import { HotelNotFoundError } from '../errors/domain.errors';
 
 export class HotelsController {
     private hotelsService: HotelsService;
@@ -12,7 +14,7 @@ export class HotelsController {
     public async getAllHotels(req: Request, res: Response): Promise<void> {
         try {
             const hotels = await this.hotelsService.getAllHotels();
-            res.status(200).json(hotels);
+            success(res, hotels);
         } catch (error) {
             res.status(500).json({ message: 'Error retrieving hotels', error });
         }
@@ -22,11 +24,8 @@ export class HotelsController {
         const { id } = req.params;
         try {
             const hotel = await this.hotelsService.getHotelById(id);
-            if (hotel) {
-                res.status(200).json(hotel);
-            } else {
-                res.status(404).json({ message: 'Hotel not found' });
-            }
+            if (!hotel) throw new HotelNotFoundError(id);
+            success(res, hotel);
         } catch (error) {
             res.status(500).json({ message: 'Error retrieving hotel', error });
         }
@@ -36,7 +35,7 @@ export class HotelsController {
         const hotelData: CreateHotelDTO = req.body;
         try {
             const newHotel = await this.hotelsService.createHotel(hotelData);
-            res.status(201).json(newHotel);
+            created(res, newHotel);
         } catch (error) {
             res.status(500).json({ message: 'Error creating hotel', error });
         }
@@ -47,11 +46,8 @@ export class HotelsController {
     const hotelData: Partial<HotelDTO> = req.body;
         try {
             const updatedHotel = await this.hotelsService.updateHotel(id, hotelData);
-            if (updatedHotel) {
-                res.status(200).json(updatedHotel);
-            } else {
-                res.status(404).json({ message: 'Hotel not found' });
-            }
+            if (!updatedHotel) throw new HotelNotFoundError(id);
+            success(res, updatedHotel);
         } catch (error) {
             res.status(500).json({ message: 'Error updating hotel', error });
         }
@@ -61,11 +57,8 @@ export class HotelsController {
         const { id } = req.params;
         try {
             const deleted = await this.hotelsService.deleteHotel(id);
-            if (deleted) {
-                res.status(204).send();
-            } else {
-                res.status(404).json({ message: 'Hotel not found' });
-            }
+            if (!deleted) throw new HotelNotFoundError(id);
+            noContent(res);
         } catch (error) {
             res.status(500).json({ message: 'Error deleting hotel', error });
         }

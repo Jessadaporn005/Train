@@ -2,11 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const hotels_controller_1 = require("../controllers/hotels.controller");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const schemas_1 = require("../validators/schemas");
 const router = (0, express_1.Router)();
 const hotelsController = new hotels_controller_1.HotelsController();
 router.get('/', hotelsController.getAllHotels.bind(hotelsController));
 router.get('/:id', hotelsController.getHotelById.bind(hotelsController));
-router.post('/', hotelsController.createHotel.bind(hotelsController));
+router.post('/', (0, validate_middleware_1.validateBody)(schemas_1.createHotelSchema), hotelsController.createHotel.bind(hotelsController));
 router.put('/:id', hotelsController.updateHotel.bind(hotelsController));
 router.delete('/:id', hotelsController.deleteHotel.bind(hotelsController));
 exports.default = router;

@@ -3,14 +3,15 @@ import { RegisterDto, LoginDto } from '../dtos/auth.dto';
 import { userRepository } from '../repositories';
 import bcrypt from 'bcryptjs';
 import { User } from '../models/user.model';
+import { DuplicateEmailError, InvalidCredentialsError, PasswordMismatchError } from '../errors/domain.errors';
 
 export class AuthService {
     async register(data: RegisterDto): Promise<Omit<User, 'password'>> {
         if (data.password !== data.confirmPassword) {
-            throw new Error('รหัสผ่านไม่ตรงกัน');
+            throw new PasswordMismatchError();
         }
         const existing = await userRepository.findByEmail(data.email);
-        if (existing) throw new Error('อีเมลถูกใช้แล้ว');
+        if (existing) throw new DuplicateEmailError(data.email);
         const hash = await bcrypt.hash(data.password, 10);
         const user = await userRepository.create({
             username: data.username,
@@ -24,9 +25,9 @@ export class AuthService {
 
     async login(data: LoginDto): Promise<{ token: string } | null> {
         const user = await userRepository.findByEmail(data.email);
-        if (!user) return null;
+    if (!user) throw new InvalidCredentialsError();
         const ok = await bcrypt.compare(data.password, user.password);
-        if (!ok) return null;
+    if (!ok) throw new InvalidCredentialsError();
         return { token: this.generateToken(user) };
     }
 

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { RegisterDto, LoginDto } from '../dtos/auth.dto';
+import { created, success } from '../utils/response';
 
 export class AuthController {
     private authService: AuthService;
@@ -11,22 +12,13 @@ export class AuthController {
 
     public async register(req: Request, res: Response): Promise<Response> {
         const data: RegisterDto = req.body;
-        try {
-            const user = await this.authService.register(data);
-            return res.status(201).json(user);
-        } catch (error: any) {
-            return res.status(400).json({ message: error.message });
-        }
+        const user = await this.authService.register(data);
+        return created(res, user);
     }
 
     public async login(req: Request, res: Response): Promise<Response> {
         const data: LoginDto = req.body;
-        try {
-            const result = await this.authService.login(data);
-            if (!result) return res.status(401).json({ message: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' });
-            return res.status(200).json(result);
-        } catch (error: any) {
-            return res.status(401).json({ message: error.message });
-        }
+        const result = await this.authService.login(data);
+        return success(res, result);
     }
 }

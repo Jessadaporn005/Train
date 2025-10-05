@@ -8,11 +8,15 @@ import restaurantsRoutes from './routes/restaurants.routes';
 import attractionsRoutes from './routes/attractions.routes';
 import bookingsRoutes from './routes/bookings.routes';
 import errorHandler from './middlewares/error.middleware';
+import { requestIdMiddleware } from './middlewares/requestId.middleware';
+import { requestLogger } from './utils/logger';
 import path from 'path';
 
 const app = express();
 
 // Middleware
+app.use(requestIdMiddleware);
+app.use(requestLogger());
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -27,6 +31,13 @@ app.use('/api/hotels', hotelsRoutes);
 app.use('/api/restaurants', restaurantsRoutes);
 app.use('/api/attractions', attractionsRoutes);
 app.use('/api/bookings', bookingsRoutes);
+
+// Health & readiness endpoints
+app.get('/health', (_req, res) => res.json({ success: true, status: 'ok', mode: process.env.USE_DB === 'true' ? 'db' : 'in-memory' }));
+app.get('/ready', async (_req, res) => {
+	// Later: check DB connection or external services
+	res.json({ success: true, ready: true });
+});
 
 // Error handling middleware
 app.use(errorHandler);
