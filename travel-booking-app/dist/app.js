@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const body_parser_1 = __importDefault(require("body-parser"));
 const express_2 = require("express");
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const users_routes_1 = __importDefault(require("./routes/users.routes"));
@@ -22,7 +21,7 @@ app.use(requestId_middleware_1.requestIdMiddleware);
 app.use((0, logger_1.requestLogger)());
 app.use((0, express_2.json)());
 app.use((0, express_2.urlencoded)({ extended: true }));
-app.use(body_parser_1.default.json());
+// (Removed bodyParser.json duplicated with express.json())
 // Static frontend (in-memory mode safe; later can still work with real DB)
 app.use(express_1.default.static(path_1.default.join(__dirname, '..', 'public')));
 // Routes

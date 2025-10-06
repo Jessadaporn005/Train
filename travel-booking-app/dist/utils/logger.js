@@ -33,14 +33,37 @@ const logError = (message, meta = {}) => logger.error({ message, ...meta });
 exports.logError = logError;
 const logWarn = (message, meta = {}) => logger.warn({ message, ...meta });
 exports.logWarn = logWarn;
+const SENSITIVE_KEYS = ['password', 'confirmPassword', 'token'];
+const SKIP_PATHS = ['/health', '/ready'];
+function redactBody(body) {
+    if (!body || typeof body !== 'object')
+        return undefined;
+    const clone = {};
+    Object.keys(body).forEach(k => {
+        if (SENSITIVE_KEYS.includes(k.toLowerCase()))
+            clone[k] = '***';
+        else
+            clone[k] = body[k];
+    });
+    return clone;
+}
 function requestLogger() {
     return (req, res, next) => {
+        if (SKIP_PATHS.includes(req.path))
+            return next();
         const start = process.hrtime.bigint();
         const originalEnd = res.end;
+        const method = req.method;
+        const url = req.originalUrl || req.url;
+        const reqMeta = { requestId: req.requestId };
+        if (method !== 'GET' && method !== 'HEAD') {
+            reqMeta.body = redactBody(req.body);
+        }
+        (0, exports.logInfo)(`REQ ${method} ${url}`, reqMeta);
         res.end = function (...args) {
             const end = process.hrtime.bigint();
             const durationMs = Number(end - start) / 1000000;
-            (0, exports.logInfo)(`${req.method} ${req.url}`, { requestId: req.requestId, statusCode: res.statusCode, durationMs });
+            (0, exports.logInfo)(`RES ${method} ${url}`, { requestId: req.requestId, statusCode: res.statusCode, durationMs });
             return originalEnd.apply(this, args);
         };
         next();

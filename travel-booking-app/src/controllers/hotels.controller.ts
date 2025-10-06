@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { HotelsService } from '../services/hotels.service';
 import { CreateHotelDTO, HotelDTO } from '../dtos/hotel.dto';
-import { success, created, noContent } from '../utils/response';
+import { success, created, noContent, paginated } from '../utils/response';
 import { HotelNotFoundError } from '../errors/domain.errors';
 
 export class HotelsController {
@@ -13,8 +13,17 @@ export class HotelsController {
 
     public async getAllHotels(req: Request, res: Response): Promise<void> {
         try {
-            const hotels = await this.hotelsService.getAllHotels();
-            success(res, hotels);
+            const query = (req as any).queryValidated as any; // validated by middleware
+            const { data, total } = await this.hotelsService.getAllHotels({
+                page: query?.page,
+                pageSize: query?.pageSize,
+                search: query?.search,
+                minPrice: query?.minPrice,
+                maxPrice: query?.maxPrice,
+                minRating: query?.minRating,
+                sort: query?.sort
+            });
+            paginated(res, data, total, query.page, query.pageSize);
         } catch (error) {
             res.status(500).json({ message: 'Error retrieving hotels', error });
         }

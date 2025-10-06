@@ -36,14 +36,34 @@ export const logInfo = (message: string, meta: Record<string, any> = {}) => logg
 export const logError = (message: string, meta: Record<string, any> = {}) => logger.error({ message, ...meta });
 export const logWarn = (message: string, meta: Record<string, any> = {}) => logger.warn({ message, ...meta });
 
+const SENSITIVE_KEYS = ['password', 'confirmPassword', 'token'];
+const SKIP_PATHS = ['/health', '/ready'];
+
+function redactBody(body: any) {
+    if (!body || typeof body !== 'object') return undefined;
+    const clone: Record<string, any> = {};
+    Object.keys(body).forEach(k => {
+        if (SENSITIVE_KEYS.includes(k.toLowerCase())) clone[k] = '***'; else clone[k] = body[k];
+    });
+    return clone;
+}
+
 export function requestLogger() {
     return (req: any, res: any, next: any) => {
+        if (SKIP_PATHS.includes(req.path)) return next();
         const start = process.hrtime.bigint();
         const originalEnd = res.end;
+        const method = req.method;
+        const url = req.originalUrl || req.url;
+        const reqMeta: any = { requestId: req.requestId };
+        if (method !== 'GET' && method !== 'HEAD') {
+            reqMeta.body = redactBody(req.body);
+        }
+        logInfo(`REQ ${method} ${url}`, reqMeta);
         res.end = function(this: any, ...args: any[]) {
             const end = process.hrtime.bigint();
             const durationMs = Number(end - start) / 1_000_000;
-            logInfo(`${req.method} ${req.url}`, { requestId: req.requestId, statusCode: res.statusCode, durationMs });
+            logInfo(`RES ${method} ${url}`, { requestId: req.requestId, statusCode: res.statusCode, durationMs });
             return originalEnd.apply(this, args);
         };
         next();

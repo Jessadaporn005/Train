@@ -32,3 +32,16 @@ export const createBookingSchema = z.object({
   numberOfGuests: z.coerce.number().min(1).max(20),
   specialRequests: z.string().max(500).optional()
 }).refine(d => d.checkOutDate > d.checkInDate, { message: 'checkOutDate must be after checkInDate', path: ['checkOutDate'] });
+
+export const hotelListQuerySchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  pageSize: z.coerce.number().min(1).max(100).default(10),
+  search: z.string().trim().min(1).optional(),
+  minPrice: z.coerce.number().min(0).optional(),
+  maxPrice: z.coerce.number().min(0).optional(),
+  minRating: z.coerce.number().min(0).max(5).optional(),
+  sort: z.enum(['price','-price','rating','-rating','name','-name']).optional()
+}).refine(d => (d.minPrice === undefined || d.maxPrice === undefined) || d.minPrice <= d.maxPrice, {
+  message: 'minPrice must be <= maxPrice', path: ['minPrice']
+});
+

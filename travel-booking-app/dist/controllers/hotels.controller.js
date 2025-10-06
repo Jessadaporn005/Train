@@ -10,8 +10,17 @@ class HotelsController {
     }
     async getAllHotels(req, res) {
         try {
-            const hotels = await this.hotelsService.getAllHotels();
-            (0, response_1.success)(res, hotels);
+            const query = req.queryValidated; // validated by middleware
+            const { data, total } = await this.hotelsService.getAllHotels({
+                page: query?.page,
+                pageSize: query?.pageSize,
+                search: query?.search,
+                minPrice: query?.minPrice,
+                maxPrice: query?.maxPrice,
+                minRating: query?.minRating,
+                sort: query?.sort
+            });
+            (0, response_1.paginated)(res, data, total, query.page, query.pageSize);
         }
         catch (error) {
             res.status(500).json({ message: 'Error retrieving hotels', error });

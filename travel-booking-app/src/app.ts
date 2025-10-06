@@ -1,5 +1,4 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 import { json, urlencoded } from 'express';
 import authRoutes from './routes/auth.routes';
 import usersRoutes from './routes/users.routes';
@@ -19,7 +18,7 @@ app.use(requestIdMiddleware);
 app.use(requestLogger());
 app.use(json());
 app.use(urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// (Removed bodyParser.json duplicated with express.json())
 
 // Static frontend (in-memory mode safe; later can still work with real DB)
 app.use(express.static(path.join(__dirname, '..', 'public')));

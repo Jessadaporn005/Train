@@ -23,8 +23,10 @@ async function api(path, {method='GET', body, headers={}}={}){
   let json = null;
   try { json = await res.json(); } catch {}
   if(!res.ok){
-    const msg = json?.error?.message || json?.message || ('Error '+res.status);
-    throw new Error(msg);
+    const code = json?.error?.code;
+    const baseMsg = json?.error?.message || json?.message || ('Error '+res.status);
+    const friendly = mapErrorCode(code, baseMsg);
+    throw new Error(friendly);
   }
   // standardized: { success, data }
   return json?.data !== undefined ? json.data : json;
@@ -78,6 +80,17 @@ hotelForm?.addEventListener('submit', async e=>{
 });
 
 function escapeHtml(str){ return String(str||'').replace(/[&<>"]/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[s])); }
+
+function mapErrorCode(code, fallback){
+  if(!code) return fallback;
+  switch(code){
+    case 'DUPLICATE_EMAIL': return 'อีเมลนี้ถูกใช้แล้ว กรุณาใช้เมลอื่น';
+    case 'PASSWORD_MISMATCH': return 'รหัสผ่านและยืนยันไม่ตรงกัน';
+    case 'INVALID_CREDENTIALS': return 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+    case 'VALIDATION_ERROR': return 'ข้อมูลที่ส่งไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง';
+    default: return fallback;
+  }
+}
 
 loadHotels();
 
