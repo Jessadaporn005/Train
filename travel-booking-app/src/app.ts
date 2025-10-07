@@ -9,6 +9,7 @@ import bookingsRoutes from './routes/bookings.routes';
 import errorHandler from './middlewares/error.middleware';
 import { requestIdMiddleware } from './middlewares/requestId.middleware';
 import { requestLogger } from './utils/logger';
+import { metricsMiddleware, metricsEndpoint } from './utils/metrics';
 import path from 'path';
 
 const app = express();
@@ -16,6 +17,7 @@ const app = express();
 // Middleware
 app.use(requestIdMiddleware);
 app.use(requestLogger());
+app.use(metricsMiddleware());
 app.use(json());
 app.use(urlencoded({ extended: true }));
 // (Removed bodyParser.json duplicated with express.json())
@@ -37,6 +39,8 @@ app.get('/ready', async (_req, res) => {
 	// Later: check DB connection or external services
 	res.json({ success: true, ready: true });
 });
+// Metrics (Prometheus)
+app.get('/metrics', metricsEndpoint);
 
 // Error handling middleware
 app.use(errorHandler);

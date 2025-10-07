@@ -37,7 +37,7 @@ export const logError = (message: string, meta: Record<string, any> = {}) => log
 export const logWarn = (message: string, meta: Record<string, any> = {}) => logger.warn({ message, ...meta });
 
 const SENSITIVE_KEYS = ['password', 'confirmPassword', 'token'];
-const SKIP_PATHS = ['/health', '/ready'];
+const SKIP_PATHS = ['/health', '/ready', '/metrics'];
 
 function redactBody(body: any) {
     if (!body || typeof body !== 'object') return undefined;
@@ -69,3 +69,8 @@ export function requestLogger() {
         next();
     };
 }
+
+// Simple audit logging helper (can be redirected to separate transport later)
+export const auditLog = (action: string, meta: Record<string, any> = {}) => {
+    logger.info({ message: `AUDIT ${action}`, audit: true, ...meta });
+};

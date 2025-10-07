@@ -8,6 +8,8 @@ const jsonwebtoken_1 = require("jsonwebtoken");
 const repositories_1 = require("../repositories");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const domain_errors_1 = require("../errors/domain.errors");
+const metrics_1 = require("../utils/metrics");
+const logger_1 = require("../utils/logger");
 class AuthService {
     async register(data) {
         if (data.password !== data.confirmPassword) {
@@ -28,11 +30,17 @@ class AuthService {
     }
     async login(data) {
         const user = await repositories_1.userRepository.findByEmail(data.email);
-        if (!user)
+        if (!user) {
+            metrics_1.authLoginFailuresTotal.inc();
             throw new domain_errors_1.InvalidCredentialsError();
+        }
         const ok = await bcryptjs_1.default.compare(data.password, user.password);
-        if (!ok)
+        if (!ok) {
+            metrics_1.authLoginFailuresTotal.inc();
             throw new domain_errors_1.InvalidCredentialsError();
+        }
+        metrics_1.authLoginsTotal.inc();
+        (0, logger_1.auditLog)('login', { userId: user.id, email: user.email });
         return { token: this.generateToken(user) };
     }
     generateToken(user) {

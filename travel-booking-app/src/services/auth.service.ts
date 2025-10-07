@@ -4,6 +4,8 @@ import { userRepository } from '../repositories';
 import bcrypt from 'bcryptjs';
 import { User } from '../models/user.model';
 import { DuplicateEmailError, InvalidCredentialsError, PasswordMismatchError } from '../errors/domain.errors';
+import { authLoginsTotal, authLoginFailuresTotal } from '../utils/metrics';
+import { auditLog } from '../utils/logger';
 
 export class AuthService {
     async register(data: RegisterDto): Promise<Omit<User, 'password'>> {
@@ -25,9 +27,17 @@ export class AuthService {
 
     async login(data: LoginDto): Promise<{ token: string } | null> {
         const user = await userRepository.findByEmail(data.email);
-    if (!user) throw new InvalidCredentialsError();
+        if (!user) {
+            authLoginFailuresTotal.inc();
+            throw new InvalidCredentialsError();
+        }
         const ok = await bcrypt.compare(data.password, user.password);
-    if (!ok) throw new InvalidCredentialsError();
+        if (!ok) {
+            authLoginFailuresTotal.inc();
+            throw new InvalidCredentialsError();
+        }
+        authLoginsTotal.inc();
+        auditLog('login', { userId: user.id, email: user.email });
         return { token: this.generateToken(user) };
     }
 

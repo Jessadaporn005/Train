@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logWarn = exports.logError = exports.logInfo = exports.log = void 0;
+exports.auditLog = exports.logWarn = exports.logError = exports.logInfo = exports.log = void 0;
 exports.requestLogger = requestLogger;
 const winston_1 = require("winston");
 const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
@@ -34,7 +34,7 @@ exports.logError = logError;
 const logWarn = (message, meta = {}) => logger.warn({ message, ...meta });
 exports.logWarn = logWarn;
 const SENSITIVE_KEYS = ['password', 'confirmPassword', 'token'];
-const SKIP_PATHS = ['/health', '/ready'];
+const SKIP_PATHS = ['/health', '/ready', '/metrics'];
 function redactBody(body) {
     if (!body || typeof body !== 'object')
         return undefined;
@@ -69,3 +69,8 @@ function requestLogger() {
         next();
     };
 }
+// Simple audit logging helper (can be redirected to separate transport later)
+const auditLog = (action, meta = {}) => {
+    logger.info({ message: `AUDIT ${action}`, audit: true, ...meta });
+};
+exports.auditLog = auditLog;

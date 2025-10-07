@@ -14,11 +14,13 @@ const bookings_routes_1 = __importDefault(require("./routes/bookings.routes"));
 const error_middleware_1 = __importDefault(require("./middlewares/error.middleware"));
 const requestId_middleware_1 = require("./middlewares/requestId.middleware");
 const logger_1 = require("./utils/logger");
+const metrics_1 = require("./utils/metrics");
 const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
 // Middleware
 app.use(requestId_middleware_1.requestIdMiddleware);
 app.use((0, logger_1.requestLogger)());
+app.use((0, metrics_1.metricsMiddleware)());
 app.use((0, express_2.json)());
 app.use((0, express_2.urlencoded)({ extended: true }));
 // (Removed bodyParser.json duplicated with express.json())
@@ -37,6 +39,8 @@ app.get('/ready', async (_req, res) => {
     // Later: check DB connection or external services
     res.json({ success: true, ready: true });
 });
+// Metrics (Prometheus)
+app.get('/metrics', metrics_1.metricsEndpoint);
 // Error handling middleware
 app.use(error_middleware_1.default);
 exports.default = app;
