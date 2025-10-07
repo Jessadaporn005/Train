@@ -60,6 +60,51 @@ The project is organized into several directories:
    npm start
    ```
 
+## Docker Usage
+
+You can run the API inside a container without installing Node.js globally (except for Docker itself):
+
+### Build Image
+```
+docker build -t travel-booking-app .
+```
+
+### Run (in-memory mode)
+```
+docker run -p 3000:3000 -e USE_DB=false travel-booking-app
+```
+
+### Run with Postgres (future DB integration) via Compose
+```
+docker compose up --build
+```
+This will start:
+- api (Node.js) on http://localhost:3000
+- postgres (exposed on host port 5433)
+
+Environment variables supplied in `docker-compose.yml` can be adjusted. When Prisma integration is added, uncomment the migrate command line in the compose file.
+
+### Stop & Clean
+```
+docker compose down
+docker compose down -v   # also remove volumes (DB data)
+```
+
+## Observability
+
+Exposed endpoints:
+- `/health` basic liveness
+- `/ready` readiness stub (extend once DB added)
+- `/metrics` Prometheus metrics (request counts, latencies, auth login counters)
+
+Sample scrape config (Prometheus):
+```yaml
+scrape_configs:
+   - job_name: 'travel_booking_app'
+      static_configs:
+         - targets: ['host.docker.internal:3000']
+```
+
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.

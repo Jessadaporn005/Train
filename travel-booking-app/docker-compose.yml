@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+  api:
+    build: .
+    container_name: travel_api
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      USE_DB: "true"
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: travel
+      DB_PASSWORD: travel_pw
+      DB_NAME: travel_booking
+      JWT_SECRET: supersecret_jwt
+    depends_on:
+      - db
+    # Uncomment if you add Prisma and need migrations on start
+    # command: sh -c "npx prisma migrate deploy && node dist/server.js"
+
+  db:
+    image: postgres:15-alpine
+    container_name: travel_db
+    restart: always
+    environment:
+      POSTGRES_DB: travel_booking
+      POSTGRES_USER: travel
+      POSTGRES_PASSWORD: travel_pw
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432" # expose alternative port on host to avoid conflicts
+
+volumes:
+  db_data:
