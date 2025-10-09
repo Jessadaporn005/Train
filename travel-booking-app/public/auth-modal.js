@@ -27,20 +27,19 @@
     if(!switcher) return;
     // Animate container height to next panel height to avoid clipping/stutter
     const container = modal?.querySelector('.auth-content');
-    const current = switcher.querySelector(`[data-active] .auth-form`);
     const nextPanel = modal?.querySelector(tab==='login' ? '.auth-slide-login .auth-form' : '.auth-slide-register .auth-form');
     if(container && nextPanel){
-      const startH = container.offsetHeight;
-      // Temporarily set to auto to measure next height
+      // set explicit start height
+      container.style.height = container.offsetHeight + 'px';
+      // switch target states first
       switcher.setAttribute('data-active', tab);
       modal?.querySelector('.auth-dialog')?.setAttribute('data-mode', tab);
-      // Force layout then measure
-      const nextH = nextPanel.parentElement.parentElement.offsetHeight || nextPanel.offsetHeight;
-      container.style.height = startH+'px';
-      // async to allow transform to register
+      // measure next height after layout
       requestAnimationFrame(()=>{
-        container.style.height = nextH+'px';
-        setTimeout(()=>{ container.style.height = ''; }, 360);
+        const measured = nextPanel.closest('.auth-slide').offsetHeight || nextPanel.offsetHeight;
+        container.style.height = measured + 'px';
+        // cleanup inline height after transition ends
+        setTimeout(()=>{ container.style.height = ''; }, 380);
       });
     } else {
       switcher.setAttribute('data-active', tab);

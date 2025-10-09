@@ -3,17 +3,10 @@ const API_BASE = '/api';
 let token = null;
 
 const $ = sel => document.querySelector(sel);
-const registerForm = $('#registerForm');
-const loginForm = $('#loginForm');
 const hotelForm = $('#hotelForm');
-const sessionBox = $('#sessionBox');
-const tokenPreview = $('#tokenPreview');
 const hotelList = $('#hotelList');
-const logoutBtn = $('#logoutBtn');
 
-function setToken(t){
-  token = t; if(t){ sessionBox.classList.remove('hidden'); tokenPreview.textContent = t.slice(0,70)+'...'; } else { sessionBox.classList.add('hidden'); tokenPreview.textContent=''; }
-}
+function setToken(t){ token = t; }
 
 async function api(path, {method='GET', body, headers={}}={}){
   const opts = { method, headers: {...headers} };
@@ -43,24 +36,6 @@ async function loadHotels(){
 
 function formToObj(form){ return Object.fromEntries(new FormData(form).entries()); }
 
-registerForm?.addEventListener('submit', async e=>{
-  e.preventDefault();
-  const msg = registerForm.querySelector('[data-role="registerMsg"]'); msg.textContent='';
-  const v = formToObj(registerForm);
-  const payload = { username: v.username, email: v.email, password: v.password, confirmPassword: v.password };
-  try { await api('/auth/register', {method:'POST', body: payload}); msg.textContent='สมัครสำเร็จ ลองล็อกอิน'; msg.className='msg ok'; }
-  catch(err){ msg.textContent=err.message; msg.className='msg error'; }
-});
-
-loginForm?.addEventListener('submit', async e=>{
-  e.preventDefault();
-  const msg = loginForm.querySelector('[data-role="loginMsg"]'); msg.textContent='';
-  const v = formToObj(loginForm);
-  try { const data = await api('/auth/login', {method:'POST', body: { email:v.email, password:v.password }}); setToken(data.token || data.accessToken); msg.textContent='ล็อกอินสำเร็จ'; msg.className='msg ok'; }
-  catch(err){ msg.textContent=err.message; msg.className='msg error'; }
-});
-
-logoutBtn?.addEventListener('click', ()=>{ setToken(null); });
 
 hotelForm?.addEventListener('submit', async e=>{
   e.preventDefault();
@@ -94,41 +69,4 @@ function mapErrorCode(code, fallback){
 
 loadHotels();
 
-// Auth tab switching logic
-(function initAuthTabs(){
-  const tabs = document.querySelectorAll('.auth-tab');
-  const underline = document.querySelector('.auth-underline');
-  const panels = document.querySelectorAll('.auth-panel');
-  function activate(name){
-    tabs.forEach(t=>{ const on = t.dataset.authTab===name; t.classList.toggle('active', on); t.setAttribute('aria-selected', on?'true':'false'); });
-    panels.forEach(p=>{ p.classList.toggle('active', p.dataset.authPanel===name || (name==='session' && p.dataset.authPanel==='session')); });
-    const activeTab = Array.from(tabs).find(t=>t.classList.contains('active'));
-    if(activeTab && underline){
-      const r = activeTab.getBoundingClientRect();
-      const pr = activeTab.parentElement.getBoundingClientRect();
-      underline.style.width = r.width+'px';
-      underline.style.transform = `translateX(${r.left-pr.left}px)`;
-    }
-    // focus first field
-    const panel = document.querySelector(`.auth-panel.active input`);
-    if(panel) panel.focus({preventScroll:true});
-    localStorage.setItem('authTab', name);
-  }
-  tabs.forEach(t=> t.addEventListener('click', e=>{ e.preventDefault(); const target = t.dataset.authTab; activate(target); }));
-  document.addEventListener('click', e=>{
-    const sw = e.target.closest('[data-switch-to]');
-    if(sw){ e.preventDefault(); activate(sw.getAttribute('data-switch-to')); }
-  });
-  // restore last tab
-  const last = localStorage.getItem('authTab');
-  if(last && ['login','register'].includes(last)) activate(last); else activate('login');
-  window.addEventListener('resize', ()=>{ // reposition underline on resize
-    const activeTab = document.querySelector('.auth-tab.active');
-    if(activeTab && underline){
-      const r = activeTab.getBoundingClientRect();
-      const pr = activeTab.parentElement.getBoundingClientRect();
-      underline.style.width = r.width+'px';
-      underline.style.transform = `translateX(${r.left-pr.left}px)`;
-    }
-  });
-})();
+// (Removed old inline auth section; modal handles auth flows)

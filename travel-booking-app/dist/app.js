@@ -30,8 +30,8 @@ app.use((0, express_rate_limit_1.default)({ windowMs: 15 * 60 * 1000, max: 300 }
 app.use((0, express_2.json)());
 app.use((0, express_2.urlencoded)({ extended: true }));
 // (Removed bodyParser.json duplicated with express.json())
-// Static frontend (in-memory mode safe; later can still work with real DB)
-app.use(express_1.default.static(path_1.default.join(__dirname, '..', 'public')));
+// Static frontend (serve home.html as default index)
+app.use(express_1.default.static(path_1.default.join(__dirname, '..', 'public'), { index: ['home.html', 'index.html'] }));
 // Routes
 app.use('/api/auth', auth_routes_1.default);
 app.use('/api/users', users_routes_1.default);

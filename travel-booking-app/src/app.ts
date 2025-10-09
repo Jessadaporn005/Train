@@ -28,8 +28,8 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 // (Removed bodyParser.json duplicated with express.json())
 
-// Static frontend (in-memory mode safe; later can still work with real DB)
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// Static frontend (serve home.html as default index)
+app.use(express.static(path.join(__dirname, '..', 'public'), { index: ['home.html', 'index.html'] }));
 
 // Routes
 app.use('/api/auth', authRoutes);
