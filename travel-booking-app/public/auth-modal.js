@@ -7,10 +7,11 @@
   const switcher = modal?.querySelector('.auth-switcher');
   const loginForm = modal?.querySelector('#loginFormModal');
   const registerForm = modal?.querySelector('#registerFormModal');
+  const ripple = modal?.querySelector('.switch-ripple');
 
   // Use same API helper style as app.js but minimal here
   const API_BASE = '/api';
-  let token = null;
+  let token = localStorage.getItem('token') || null;
   function setToken(t){ token = t; localStorage.setItem('token', t||''); }
   function getHeaders(){ const h = {'Content-Type':'application/json'}; if(token){ h['Authorization']='Bearer '+token; } return h; }
   async function api(path, method='GET', body){
@@ -60,12 +61,39 @@
     underline.style.width = r.width+'px'; underline.style.transform = `translateX(${r.left-pr.left}px)`;
   }
 
-  openers.forEach(a => a.addEventListener('click', e=>{ e.preventDefault(); open(); }));
+  openers.forEach(a => a.addEventListener('click', e=>{ e.preventDefault();
+    // ripple origin where user clicks opener
+    if(ripple){
+      const rect = modal.querySelector('.auth-content').getBoundingClientRect();
+      const rx = ((e.clientX - rect.left)/rect.width)*100;
+      const ry = ((e.clientY - rect.top)/rect.height)*100;
+      ripple.style.setProperty('--rx', rx+'%');
+      ripple.style.setProperty('--ry', ry+'%');
+      ripple.classList.remove('active'); void ripple.offsetWidth; ripple.classList.add('active');
+    }
+    open();
+  }));
   closeEls.forEach(el => el.addEventListener('click', ()=> close()));
   modal?.addEventListener('click', e=>{ if(e.target.classList.contains('auth-modal')) close(); });
   window.addEventListener('resize', positionUnderline);
 
   tabs?.forEach(t => t.addEventListener('click', e=>{ e.preventDefault(); toggle(t.dataset.tab); }));
+
+  // password toggles
+  function attachPwToggle(form){
+    const pwField = form?.querySelector('input[type="password"]');
+    if(!pwField || form.querySelector('.pw-toggle')) return;
+    const wrap = pwField.closest('.field');
+    wrap?.classList.add('pw');
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'pw-toggle'; btn.textContent = 'แสดง';
+    btn.addEventListener('click', ()=>{
+      const isPw = pwField.type === 'password'; pwField.type = isPw ? 'text' : 'password';
+      btn.textContent = isPw ? 'ซ่อน' : 'แสดง'; pwField.focus();
+    });
+    wrap?.appendChild(btn);
+  }
+  attachPwToggle(loginForm); attachPwToggle(registerForm);
 
   loginForm?.addEventListener('submit', async e=>{
     e.preventDefault();
@@ -75,7 +103,7 @@
       const data = await api('/auth/login','POST',{ email, password });
       setToken(data.token);
       msg.textContent='ล็อกอินสำเร็จ'; msg.className='msg ok';
-      setTimeout(()=> close(), 600);
+      setTimeout(()=> close(), 400);
     } catch(err) { msg.textContent = err.message || 'ล็อกอินไม่สำเร็จ'; msg.className='msg error'; }
   });
 

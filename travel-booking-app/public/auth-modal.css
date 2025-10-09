@@ -13,7 +13,11 @@
 
 .auth-content { padding: 1.2rem 1.1rem 1.3rem; position:relative; overflow:hidden; height:auto; transition: height .32s ease; z-index:2; }
 .auth-subtitle { margin:-.2rem 0 .5rem; font-size:.85rem; color: var(--color-text-soft); }
-.switch-ripple { position:absolute; top:-40%; left:-40%; width:180%; height:180%; border-radius: 50%; pointer-events:none; opacity:.0; transform: scale(.9); background: radial-gradient(circle at 50% 50%, rgba(139,211,221,.25), rgba(139,211,221,0) 60%); transition: opacity .5s ease, transform .5s ease; }
+.switch-ripple { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; opacity:0; background: radial-gradient(circle at var(--rx,50%) var(--ry,50%), rgba(139,211,221,.28), rgba(139,211,221,0) 45%); transition: opacity .35s ease; }
+.auth-dialog[data-mode="register"] .switch-ripple { opacity:.45; }
+.auth-dialog[data-mode="login"] .switch-ripple { opacity:.3; }
+@keyframes ripplePulse { 0% { transform: scale(.96); opacity:.35; } 100% { transform: scale(1.06); opacity:.0; } }
+.switch-ripple.active { animation: ripplePulse .6s ease both; }
 .auth-close { position:absolute; top:.6rem; right:.6rem; width:36px; height:36px; border-radius:50%; border:none; background: rgba(255,255,255,.65); color:#183041; font-size:20px; cursor:pointer; box-shadow: var(--shadow-sm); }
 .auth-close:hover { filter: brightness(1.05); }
 
@@ -34,6 +38,11 @@
 .auth-form .field span { font-size:.64rem; letter-spacing:.7px; text-transform:uppercase; font-weight:600; color: var(--color-text-soft); }
 .auth-form .field input { padding:.7rem .85rem; border:1px solid var(--color-border); border-radius: 10px; background: var(--color-bg-alt); }
 .auth-form .field input:focus { outline:none; border-color: var(--color-accent); box-shadow:0 0 0 3px rgba(124,198,221,.35); }
+
+/* password toggle */
+.field.pw { position:relative; }
+.pw-toggle { position:absolute; right:.4rem; top:50%; transform: translateY(-50%); background:transparent; border:none; color: var(--color-text-soft); cursor:pointer; padding:.2rem .3rem; font-size:.8rem; }
+.pw-toggle:hover { color: var(--color-text); }
 
 /* left-right animation */
 .auth-switcher[data-active="login"] { --x: 0%; }
