@@ -6,13 +6,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="theme.css" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="auth-modal.css" />
 </head>
 <body>
 <header>
   <h1>Travel Booking (Demo)</h1>
   <nav>
   <a href="home.html">Home</a>
-  <a href="#auth">Auth</a>
+  <a href="#" class="auth-open">Auth</a>
     <a href="#hotels">Hotels</a>
     <a href="#restaurants">Restaurants</a>
     <a href="#bookings">Bookings</a>
@@ -98,6 +99,44 @@
 <footer>
   <small>&copy; 2025 Travel Booking Demo — In-Memory Mode</small>
 </footer>
+<!-- Auth Modal (shared) -->
+<div class="auth-modal" id="authModal" aria-hidden="true">
+  <div class="auth-overlay" data-close-modal></div>
+  <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <button class="auth-close" title="ปิด" aria-label="ปิด" data-close-modal>&times;</button>
+    <div class="auth-hero"></div>
+    <div class="auth-content">
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab active" data-tab="login" role="tab" aria-selected="true">เข้าสู่ระบบ</button>
+        <button class="auth-tab" data-tab="register" role="tab" aria-selected="false">สมัครสมาชิก</button>
+        <div class="auth-underline" aria-hidden="true"></div>
+      </div>
+      <div class="auth-switcher" data-active="login">
+        <div class="auth-slide auth-slide-login">
+          <form id="loginFormModal" class="auth-form" autocomplete="on">
+            <h3 id="authTitle">เข้าสู่ระบบ</h3>
+            <label class="field"><span>อีเมล</span><input name="email" type="email" required placeholder="you@example.com" /></label>
+            <label class="field"><span>รหัสผ่าน</span><input name="password" type="password" required placeholder="••••••••" /></label>
+            <button class="btn-gradient wide">เข้าสู่ระบบ</button>
+            <div class="msg" data-role="loginMsg"></div>
+          </form>
+        </div>
+        <div class="auth-slide auth-slide-register">
+          <form id="registerFormModal" class="auth-form" autocomplete="off">
+            <h3>สมัครสมาชิก</h3>
+            <label class="field"><span>ชื่อผู้ใช้</span><input name="username" required placeholder="เช่น travellover" /></label>
+            <label class="field"><span>อีเมล</span><input name="email" type="email" required placeholder="you@example.com" /></label>
+            <label class="field"><span>รหัสผ่าน</span><input name="password" type="password" minlength="6" required placeholder="อย่างน้อย 6 ตัว" /></label>
+            <button class="btn-gradient wide">สมัครสมาชิก</button>
+            <div class="msg" data-role="registerMsg"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="app.js"></script>
+<script src="auth-modal.js"></script>
 </body>
 </html>
