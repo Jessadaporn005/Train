@@ -25,6 +25,7 @@
   function toggle(tab){
     if(!switcher) return;
     switcher.setAttribute('data-active', tab);
+    modal?.querySelector('.auth-dialog')?.setAttribute('data-mode', tab);
     tabs?.forEach(t=>{ const on = t.dataset.tab===tab; t.classList.toggle('active', on); t.setAttribute('aria-selected', on?'true':'false'); });
     positionUnderline();
     focusFirst();

@@ -102,10 +102,11 @@
 <!-- Auth Modal (shared) -->
 <div class="auth-modal" id="authModal" aria-hidden="true">
   <div class="auth-overlay" data-close-modal></div>
-  <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle" data-mode="login">
     <button class="auth-close" title="ปิด" aria-label="ปิด" data-close-modal>&times;</button>
     <div class="auth-hero"></div>
     <div class="auth-content">
+      <div class="switch-ripple" aria-hidden="true"></div>
       <div class="auth-tabs" role="tablist">
         <button class="auth-tab active" data-tab="login" role="tab" aria-selected="true">เข้าสู่ระบบ</button>
         <button class="auth-tab" data-tab="register" role="tab" aria-selected="false">สมัครสมาชิก</button>
@@ -115,6 +116,7 @@
         <div class="auth-slide auth-slide-login">
           <form id="loginFormModal" class="auth-form" autocomplete="on">
             <h3 id="authTitle">เข้าสู่ระบบ</h3>
+            <div class="auth-subtitle">Welcome back 👋</div>
             <label class="field"><span>อีเมล</span><input name="email" type="email" required placeholder="you@example.com" /></label>
             <label class="field"><span>รหัสผ่าน</span><input name="password" type="password" required placeholder="••••••••" /></label>
             <button class="btn-gradient wide">เข้าสู่ระบบ</button>
@@ -124,6 +126,7 @@
         <div class="auth-slide auth-slide-register">
           <form id="registerFormModal" class="auth-form" autocomplete="off">
             <h3>สมัครสมาชิก</h3>
+            <div class="auth-subtitle">พร้อมออกเดินทาง ✨</div>
             <label class="field"><span>ชื่อผู้ใช้</span><input name="username" required placeholder="เช่น travellover" /></label>
             <label class="field"><span>อีเมล</span><input name="email" type="email" required placeholder="you@example.com" /></label>
             <label class="field"><span>รหัสผ่าน</span><input name="password" type="password" minlength="6" required placeholder="อย่างน้อย 6 ตัว" /></label>

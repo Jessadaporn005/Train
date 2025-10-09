@@ -11,14 +11,16 @@
  position:relative; }
 .auth-hero:after { content:""; position:absolute; inset:auto 0 -60px auto; height:120px; filter:blur(22px); background: radial-gradient(closest-side, rgba(255,255,255,.7), rgba(255,255,255,0)); }
 
-.auth-content { padding: 1.2rem 1.1rem 1.3rem; position:relative; }
+.auth-content { padding: 1.2rem 1.1rem 1.3rem; position:relative; overflow:hidden; }
+.auth-subtitle { margin:-.2rem 0 .5rem; font-size:.85rem; color: var(--color-text-soft); }
+.switch-ripple { position:absolute; top:-40%; left:-40%; width:180%; height:180%; border-radius: 50%; pointer-events:none; opacity:.0; transform: scale(.9); background: radial-gradient(circle at 50% 50%, rgba(139,211,221,.25), rgba(139,211,221,0) 60%); transition: opacity .5s ease, transform .5s ease; }
 .auth-close { position:absolute; top:.6rem; right:.6rem; width:36px; height:36px; border-radius:50%; border:none; background: rgba(255,255,255,.65); color:#183041; font-size:20px; cursor:pointer; box-shadow: var(--shadow-sm); }
 .auth-close:hover { filter: brightness(1.05); }
 
 .auth-tabs { display:flex; gap:.85rem; position:relative; margin-bottom:.75rem; }
 .auth-tab { background:transparent; border:none; color: var(--color-text-soft); font-weight:700; letter-spacing:.8px; cursor:pointer; padding:.35rem .2rem; }
 .auth-tab.active { color: var(--color-text); }
-.auth-underline { position:absolute; bottom:-2px; left:0; height:2px; width:64px; background: linear-gradient(90deg,var(--color-accent-grad-start),var(--color-accent-grad-end)); border-radius: 4px; transition: transform .28s ease, width .28s ease; }
+.auth-underline { position:absolute; bottom:-2px; left:0; height:2px; width:64px; background: linear-gradient(90deg,var(--color-accent-grad-start),var(--color-accent-grad-end)); border-radius: 4px; transition: transform .32s cubic-bezier(.4,0,.2,1), width .32s cubic-bezier(.4,0,.2,1); }
 
 .auth-switcher { position:relative; overflow:hidden; }
 .auth-slide { width:100%; padding:.2rem 0 .3rem; }
@@ -38,7 +40,12 @@
 /* left-right animation */
 .auth-switcher[data-active="login"] { --x: 0%; }
 .auth-switcher[data-active="register"] { --x: -100%; }
-.auth-switcher { display:grid; grid-template-columns: 100% 100%; transform: translateX(var(--x)); transition: transform .35s cubic-bezier(.4,0,.2,1); }
+.auth-switcher { display:grid; grid-template-columns: 100% 100%; transform: translateX(var(--x)); transition: transform .45s cubic-bezier(.25,.8,.25,1); }
+.auth-dialog[data-mode="register"] .switch-ripple { opacity:.55; transform: scale(1); }
+.auth-dialog[data-mode="login"] .switch-ripple { opacity:.35; transform: scale(.96); }
+
+/* gentle wave edge at top of form area */
+.auth-content:before { content:""; position:absolute; top:-18px; left:-10%; width:120%; height:40px; background: radial-gradient(70px 30px at 20% 100%, rgba(255,255,255,.8), rgba(255,255,255,0) 70%), radial-gradient(90px 40px at 50% 100%, rgba(255,255,255,.8), rgba(255,255,255,0) 65%), radial-gradient(60px 30px at 80% 100%, rgba(255,255,255,.8), rgba(255,255,255,0) 70%); pointer-events:none; }
 .auth-slide { width:100%; }
 
 @media (prefers-reduced-motion: reduce) { .auth-switcher { transition: none; } .auth-underline { transition: none; } }
