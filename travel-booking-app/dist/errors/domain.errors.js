@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserNotFoundError = exports.BookingNotFoundError = exports.RestaurantNotFoundError = exports.AttractionNotFoundError = exports.HotelNotFoundError = exports.InvalidCredentialsError = exports.PasswordMismatchError = exports.DuplicateEmailError = void 0;
+exports.ExpiredRefreshTokenError = exports.InvalidRefreshTokenError = exports.UserNotFoundError = exports.BookingNotFoundError = exports.RestaurantNotFoundError = exports.AttractionNotFoundError = exports.HotelNotFoundError = exports.InvalidCredentialsError = exports.PasswordMismatchError = exports.DuplicateEmailError = void 0;
 const app_error_1 = require("./app.error");
 class DuplicateEmailError extends app_error_1.AppError {
     constructor(email) { super(`อีเมลถูกใช้แล้ว: ${email}`, 400, 'DUPLICATE_EMAIL'); }
@@ -34,3 +34,11 @@ class UserNotFoundError extends app_error_1.AppError {
     constructor(id) { super(`ไม่พบผู้ใช้ id=${id}`, 404, 'USER_NOT_FOUND'); }
 }
 exports.UserNotFoundError = UserNotFoundError;
+class InvalidRefreshTokenError extends app_error_1.AppError {
+    constructor() { super('refresh token ไม่ถูกต้อง', 401, 'INVALID_REFRESH_TOKEN'); }
+}
+exports.InvalidRefreshTokenError = InvalidRefreshTokenError;
+class ExpiredRefreshTokenError extends app_error_1.AppError {
+    constructor() { super('refresh token หมดอายุ', 401, 'EXPIRED_REFRESH_TOKEN'); }
+}
+exports.ExpiredRefreshTokenError = ExpiredRefreshTokenError;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hotelListQuerySchema = exports.createBookingSchema = exports.createHotelSchema = exports.loginSchema = exports.registerSchema = void 0;
+exports.hotelListQuerySchema = exports.createBookingSchema = exports.createHotelSchema = exports.refreshSchema = exports.loginSchema = exports.registerSchema = void 0;
 const zod_1 = require("zod");
 exports.registerSchema = zod_1.z.object({
     username: zod_1.z.string().min(2).max(50),
@@ -11,6 +11,9 @@ exports.registerSchema = zod_1.z.object({
 exports.loginSchema = zod_1.z.object({
     email: zod_1.z.string().email(),
     password: zod_1.z.string().min(1)
+});
+exports.refreshSchema = zod_1.z.object({
+    refreshToken: zod_1.z.string().min(20)
 });
 exports.createHotelSchema = zod_1.z.object({
     name: zod_1.z.string().min(2),

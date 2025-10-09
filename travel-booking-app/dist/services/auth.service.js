@@ -41,7 +41,9 @@ class AuthService {
         }
         metrics_1.authLoginsTotal.inc();
         (0, logger_1.auditLog)('login', { userId: user.id, email: user.email });
-        return { token: this.generateToken(user) };
+        const token = this.generateToken(user);
+        const refreshToken = await this.generateRefreshToken(user.id);
+        return { token, refreshToken };
     }
     generateToken(user) {
         const payload = { email: user.email, id: user.id };
@@ -54,6 +56,30 @@ class AuthService {
         catch (error) {
             return null;
         }
+    }
+    async generateRefreshToken(userId) {
+        const ttlDays = Number(process.env.REFRESH_TTL_DAYS || 7);
+        const expiresAt = new Date(Date.now() + ttlDays * 24 * 60 * 60 * 1000);
+        const token = Buffer.from(`${userId}:${Date.now()}:${Math.random().toString(36).slice(2)}`).toString('base64url');
+        await repositories_1.refreshTokenRepository.create(userId, token, expiresAt);
+        return token;
+    }
+    async refresh(refreshToken) {
+        const record = await repositories_1.refreshTokenRepository.findByToken(refreshToken);
+        if (!record)
+            throw new domain_errors_1.InvalidRefreshTokenError();
+        if (record.revokedAt)
+            throw new domain_errors_1.InvalidRefreshTokenError();
+        if (record.expiresAt.getTime() < Date.now())
+            throw new domain_errors_1.ExpiredRefreshTokenError();
+        const user = await repositories_1.userRepository.findById(record.userId);
+        if (!user)
+            throw new domain_errors_1.InvalidRefreshTokenError();
+        return { token: this.generateToken(user) };
+    }
+    async logout(userId) {
+        await repositories_1.refreshTokenRepository.deleteByUser(userId);
+        (0, logger_1.auditLog)('logout', { userId });
     }
 }
 exports.AuthService = AuthService;

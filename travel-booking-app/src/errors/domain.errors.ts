@@ -24,3 +24,10 @@ export class BookingNotFoundError extends AppError {
 export class UserNotFoundError extends AppError {
   constructor(id: string) { super(`ไม่พบผู้ใช้ id=${id}`, 404, 'USER_NOT_FOUND'); }
 }
+
+export class InvalidRefreshTokenError extends AppError {
+  constructor() { super('refresh token ไม่ถูกต้อง', 401, 'INVALID_REFRESH_TOKEN'); }
+}
+export class ExpiredRefreshTokenError extends AppError {
+  constructor() { super('refresh token หมดอายุ', 401, 'EXPIRED_REFRESH_TOKEN'); }
+}

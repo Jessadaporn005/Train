@@ -12,6 +12,10 @@ export const loginSchema = z.object({
   password: z.string().min(1)
 });
 
+export const refreshSchema = z.object({
+  refreshToken: z.string().min(20)
+});
+
 export const createHotelSchema = z.object({
   name: z.string().min(2),
   location: z.string().min(2),

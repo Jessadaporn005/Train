@@ -4,6 +4,7 @@ import { RegisterDto, LoginDto } from '../dtos/auth.dto';
 import { created, success } from '../utils/response';
 import { userRepository } from '../repositories';
 import { UserNotFoundError } from '../errors/domain.errors';
+import { refreshSchema } from '../validators/schemas';
 
 export class AuthController {
     private authService: AuthService;
@@ -30,5 +31,21 @@ export class AuthController {
         if (!user) throw new UserNotFoundError(userId);
         const { password, ...safe } = user as any;
         return success(res, safe);
+    }
+
+    public async refresh(req: Request, res: Response): Promise<Response> {
+        const parsed = refreshSchema.safeParse(req.body);
+        if (!parsed.success) {
+            return res.status(400).json({ success: false, error: { code: 'VALIDATION_ERROR', message: 'Invalid refresh request', details: parsed.error.flatten() } });
+        }
+        const { refreshToken } = parsed.data;
+        const result = await this.authService.refresh(refreshToken);
+        return success(res, result);
+    }
+
+    public async logout(req: Request, res: Response): Promise<Response> {
+        const userId = req.userId as string;
+        await this.authService.logout(userId);
+        return success(res, { ok: true });
     }
 }
