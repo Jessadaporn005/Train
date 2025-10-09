@@ -16,11 +16,17 @@ const requestId_middleware_1 = require("./middlewares/requestId.middleware");
 const logger_1 = require("./utils/logger");
 const metrics_1 = require("./utils/metrics");
 const path_1 = __importDefault(require("path"));
+const helmet_1 = __importDefault(require("helmet"));
+const cors_1 = __importDefault(require("cors"));
+const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const app = (0, express_1.default)();
 // Middleware
 app.use(requestId_middleware_1.requestIdMiddleware);
 app.use((0, logger_1.requestLogger)());
 app.use((0, metrics_1.metricsMiddleware)());
+app.use((0, helmet_1.default)());
+app.use((0, cors_1.default)());
+app.use((0, express_rate_limit_1.default)({ windowMs: 15 * 60 * 1000, max: 300 }));
 app.use((0, express_2.json)());
 app.use((0, express_2.urlencoded)({ extended: true }));
 // (Removed bodyParser.json duplicated with express.json())

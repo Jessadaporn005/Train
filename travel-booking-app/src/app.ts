@@ -11,6 +11,9 @@ import { requestIdMiddleware } from './middlewares/requestId.middleware';
 import { requestLogger } from './utils/logger';
 import { metricsMiddleware, metricsEndpoint } from './utils/metrics';
 import path from 'path';
+import helmet from 'helmet';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 
 const app = express();
 
@@ -18,6 +21,9 @@ const app = express();
 app.use(requestIdMiddleware);
 app.use(requestLogger());
 app.use(metricsMiddleware());
+app.use(helmet());
+app.use(cors());
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 300 }));
 app.use(json());
 app.use(urlencoded({ extended: true }));
 // (Removed bodyParser.json duplicated with express.json())
