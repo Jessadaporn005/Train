@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="theme.css" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="auth-modal.css" />
+  <link rel="stylesheet" href="auth-ui.css" />
   <link rel="stylesheet" href="home.css" />
 </head>
 <body class="theme-soft">
@@ -15,7 +16,7 @@
   <nav>
     <a href="home.html" class="active">หน้าแรก</a>
     <a href="index.html#hotels">โรงแรม</a>
-    <a href="#" class="auth-open">เข้าสู่ระบบ</a>
+  <span id="authMount"><a href="#" class="auth-open" data-auth-open>เข้าสู่ระบบ</a></span>
   </nav>
 </header>
 <section class="hero fade-in" id="hero" data-bg-key="default">
@@ -62,7 +63,26 @@
   <div class="auth-overlay" data-close-modal></div>
   <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle" data-mode="login">
     <button class="auth-close" title="ปิด" aria-label="ปิด" data-close-modal>&times;</button>
-    <div class="auth-hero"></div>
+    <div class="auth-hero">
+      <div class="hero-state hero-login">
+        <div class="hero-icon">🔑</div>
+        <h3 class="hero-title">ยินดีต้อนรับกลับ</h3>
+        <p class="hero-desc">เข้าสู่ระบบเพื่อจัดการทริปของคุณ</p>
+        <ul class="hero-points">
+          <li>เข้าถึงข้อมูลที่บันทึกไว้</li>
+          <li>ซิงก์อุปกรณ์</li>
+        </ul>
+      </div>
+      <div class="hero-state hero-register">
+        <div class="hero-icon">✨</div>
+        <h3 class="hero-title">เริ่มออกเดินทาง</h3>
+        <p class="hero-desc">สมัครสมาชิกใหม่ในไม่กี่ขั้นตอน</p>
+        <ul class="hero-points">
+          <li>บันทึกแผนการเดินทาง</li>
+          <li>ติดตามการจอง</li>
+        </ul>
+      </div>
+    </div>
     <div class="auth-content">
       <div class="switch-ripple" aria-hidden="true"></div>
       <div class="auth-tabs" role="tablist">
@@ -70,7 +90,7 @@
         <button class="auth-tab" data-tab="register" role="tab" aria-selected="false">สมัครสมาชิก</button>
         <div class="auth-underline" aria-hidden="true"></div>
       </div>
-      <div class="auth-switcher" data-active="login">
+  <div class="auth-switcher" data-active="login">
         <div class="auth-slide auth-slide-login">
           <form id="loginFormModal" class="auth-form" autocomplete="on">
             <h3 id="authTitle">เข้าสู่ระบบ</h3>
@@ -88,6 +108,7 @@
             <label class="field"><span>ชื่อผู้ใช้</span><input name="username" required placeholder="เช่น travellover" /></label>
             <label class="field"><span>อีเมล</span><input name="email" type="email" required placeholder="you@example.com" /></label>
             <label class="field"><span>รหัสผ่าน</span><input name="password" type="password" minlength="6" required placeholder="อย่างน้อย 6 ตัว" /></label>
+            <label class="field"><span>ยืนยันรหัสผ่าน</span><input name="confirmPassword" type="password" minlength="6" required placeholder="พิมพ์รหัสผ่านอีกครั้ง" /></label>
             <button class="btn-gradient wide">สมัครสมาชิก</button>
             <div class="msg" data-role="registerMsg"></div>
           </form>
@@ -98,5 +119,6 @@
   </div>
 <script src="home.js"></script>
 <script src="auth-modal.js"></script>
+<script src="header-auth.js"></script>
 </body>
 </html>

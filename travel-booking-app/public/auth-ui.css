@@ -1,0 +1,13 @@
+/* Small shared styles for header auth state and messages */
+#authMount{ display:inline-flex; align-items:center; gap:.5rem; }
+#authMount .avatar{ width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#9bd3e1,#6fb9d2); display:inline-flex; align-items:center; justify-content:center; color:#11313f; font-weight:700; font-size:.9rem; box-shadow:0 1px 3px rgba(0,0,0,.15); }
+#authMount .hello{ color:var(--color-text-soft); font-size:.9rem; }
+#authMount .link{ color:var(--color-accent); cursor:pointer; font-weight:600; }
+#authMount button{ background:transparent; border:none; color:var(--color-text-soft); cursor:pointer; }
+#authMount button:hover{ color:var(--color-text); }
+
+/* Success toast */
+.toast{ position:fixed; top:16px; right:16px; background:var(--color-surface); border:1px solid var(--color-border); box-shadow:0 10px 30px rgba(0,0,0,.2); padding:.6rem .8rem; border-radius:10px; z-index:1500; opacity:0; transform: translateY(-10px); transition: all .25s ease; }
+.toast.show{ opacity:1; transform: translateY(0); }
+.toast.ok{ border-color:#7dcfb5; }
+.toast.err{ border-color:#f39a9a; }

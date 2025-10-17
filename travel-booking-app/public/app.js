@@ -1,12 +1,12 @@
 // Simple frontend script using Fetch API against existing Express endpoints
 const API_BASE = '/api';
-let token = null;
+let token = localStorage.getItem('token') || null;
 
 const $ = sel => document.querySelector(sel);
 const hotelForm = $('#hotelForm');
 const hotelList = $('#hotelList');
 
-function setToken(t){ token = t; }
+function setToken(t){ token = t; if(t) localStorage.setItem('token', t); else localStorage.removeItem('token'); }
 
 async function api(path, {method='GET', body, headers={}}={}){
   const opts = { method, headers: {...headers} };
@@ -66,6 +66,9 @@ function mapErrorCode(code, fallback){
     default: return fallback;
   }
 }
+
+// react to modal login
+document.addEventListener('auth:login', ()=>{ token = localStorage.getItem('token') || null; loadHotels(); });
 
 loadHotels();
 
